@@ -1,0 +1,9 @@
+services:
+  demo:
+    image: alpine
+    command: printenv
+    environment:
+      Hello: World
+      FromDotEnv: ${GREETING}
+    env_file:
+      - dev.env
