@@ -1,0 +1,30 @@
+
+volumes:
+  keycloak-postgres-data:
+
+services:
+  keycloak:
+      image: quay.io/keycloak/keycloak:26.0.1
+      command: start-dev
+      restart: always
+      environment:
+        KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
+        KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
+        DB_VENDOR: postgres
+        DB_ADDR: postgres
+        DB_DATABASE: ${POSTGRES_DB}
+        DB_USER: ${POSTGRES_USER}
+        DB_PASSWORD: ${POSTGRES_PASSWORD}
+      ports:
+          - 8080:8080
+
+
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - keycloak-postgres-data:/var/lib/postgresql/data
