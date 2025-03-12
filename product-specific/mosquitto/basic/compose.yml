@@ -1,0 +1,54 @@
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    ports:
+      # Mqtt:
+      - 1883:1883
+      # Websocket:
+      - 9001:9001
+    volumes:
+      - ./config/:/mosquitto/config/
+    restart: always
+    healthcheck:
+      # Health Check that tries to subscribe to topic hc, timeout 2seconds, exits cleanly if success
+      test: mosquitto_sub -h localhost -t hc -E -W 2
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"     # Maximum size of each log file
+        max-file: "3"       # Maximum number of log files to retain
+
+  mosquitto-heartbeat:
+    build:
+      context: ./images/heartbeat
+      dockerfile: Dockerfile
+    environment:
+      MQTT_HOST: mosquitto
+      MQTT_PORT: 1883
+      MQTT_TOPIC: hb/mqtt
+    depends_on:
+      mosquitto:
+        condition: service_started
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"     # Maximum size of each log file
+        max-file: "3"       # Maximum number of log files to retain
+  
+  mosquitto-listener:
+    image: efrecon/mqtt-client
+    command: sub -h mosquitto -p 1883 -t "#" -v
+    depends_on:
+      mosquitto:
+        condition: service_started
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"     # Maximum size of each log file
+        max-file: "3"       # Maximum number of log files to retain
