@@ -3,10 +3,11 @@
 
 1. Open a terminal in this directory
 2. Run `docker compose up -d` (or `docker compose up`) to start the services
-3. Use a tool such as the [Ddosify Docker Extenion](https://open.docker.com/extensions/marketplace?extensionId=ddosify/ddosify-docker-extension) to load test the two endpoints.
+3. Use a tool such as the  to load test the two endpoints.
 
 
-# Testing With Ddosify
+
+# Testing With [Ddosify Docker Extenion](https://open.docker.com/extensions/marketplace?extensionId=ddosify/ddosify-docker-extension)
 
 - Make sure to use the following urls, when testing from a container such as Ddosify Docker Extension:
     - http://host.docker.internal:8080/rate-limit
@@ -90,3 +91,11 @@
 |-------------------------|-------------------|
 | 200 (OK)                | 20                |
 | 429 (Too Many Requests) | 80                |
+
+
+
+# Resources
+- [nginx docker image](https://hub.docker.com/_/nginx)
+- [Ddosify Docker Extenion](https://open.docker.com/extensions/marketplace?extensionId=ddosify/ddosify-docker-extension)
+- [HTTP load generator, ApacheBench (ab) replacement](https://github.com/rakyll/hey)
+- [Dockerized Hey, by William-Yeh](https://github.com/William-Yeh/docker-hey)
