@@ -1,0 +1,25 @@
+
+services:  
+  listener:
+    container_name: listener
+    image: mendhak/http-https-echo:30
+    environment:
+        - HTTP_PORT=8888
+        - HTTPS_PORT=9999
+    ports:
+        - "8080:8888"
+        - "8443:9999"
+        
+  curler:
+    build: 
+      context: ./images/curler
+      dockerfile: Dockerfile
+    deploy:
+      replicas: 1
+
+  pinger:
+    build: 
+      context: ./images/pinger
+      dockerfile: Dockerfile
+    deploy:
+      replicas: 1
