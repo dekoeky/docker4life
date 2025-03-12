@@ -1,0 +1,43 @@
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx_rate_limit
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+
+  # A demo service, that acts as the service that we want to rate limit  
+  backend:
+    image: httpd:alpine
+    container_name: backend_service
+    ports:
+      - "8081:80"
+    command: ["httpd", "-D", "FOREGROUND"]
+
+  load-tester-globallimitedendpoint:
+    image: williamyeh/hey
+    command: -n ${NUMBER_OF_REQUESTS:?error} http://nginx:80/global-limit
+    depends_on:
+      - nginx
+    deploy:
+      # Only the limited amount of requests will pass, shared by all these replicas
+      replicas: 5
+
+  load-tester-ratelimitedendpoint:
+    image: williamyeh/hey
+    command: -n ${NUMBER_OF_REQUESTS:?error} http://nginx:80/rate-limit
+    depends_on:
+      - nginx
+    deploy:
+      # Each Replica should be able to make the amount of requests, specified by the limit
+      replicas: 5
+
+  load-tester-unlimitedendpoint:
+    image: williamyeh/hey
+    command: -n ${NUMBER_OF_REQUESTS:?error} http://nginx:80/no-limit
+    depends_on:
+      - nginx
