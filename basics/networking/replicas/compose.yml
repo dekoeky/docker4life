@@ -1,0 +1,9 @@
+
+name: demo
+
+services:
+
+  listener:
+    image: dekoeky/http-inspector:dev
+    deploy:
+      replicas: 3
